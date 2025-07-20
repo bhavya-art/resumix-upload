@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder - Resumix</title>
+    <link rel="stylesheet" href="upload.css">
+    <link rel="icon" href="logo.png" type="image/png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div id="builderpage" class="builder-container">
+        <div class="builder-layout">
+            <!-- Left Panel - Form -->
+            <div class="left-panel">
+                <div class="panel-header">
+                    <a href="https://main--resumix-eds--bhavya-art.aem.live/" class="back-btn" title="Back to Home">←</a>
+                    <h2>Resume Builder</h2>
+                    <div class="template-selector">
+                        <label>Template:</label>
+                        <select id="templateSelect" onchange="applyTemplate(this.value)">
+                            <option value="template-professional">Professional</option>
+                            <option value="template-modern">Modern</option>
+                            <option value="template-minimal">Minimal</option>
+                        </select>
+                    </div>
+                </div>
+                
+
+                <div class="resume-parser-section" id="resumeParserSection">
+    <h3 style="margin-top: 0; color: #495057;">Quick Start</h3>
+    <p style="color: #6c757d; margin-bottom: 20px;">Upload your existing resume to auto-fill the form</p>
+    
+    <button type="button" class="parser-upload-btn" id="parserUploadBtn">
+        📄 Upload Resume
+    </button>
+    
+    <input type="file" id="parserFileInput" accept=".pdf,.doc,.docx" style="display: none;">
+    
+    <div class="parser-status" id="parserStatus"></div>
+    <div class="parser-progress" id="parserProgress">
+        <div class="parser-progress-fill" id="parserProgressFill"></div>
+    </div>
+    
+    <small style="color: #6c757d;">Supported formats: PDF, DOC, DOCX (Max 10MB)</small>
+</div>
+<div class="customization-panel">
+    <div class="customization-header">
+        
+        <h3>Customize Your Resume</h3>
+    </div>
+    
+    <div class="customization-section">
+        <label class="section-label">Theme Color</label>
+        <div class="color-palette">
+            <div class="color-option" style="background: #ef5a52;" onclick="setThemeColor('#ef5a52', '#dc2626')" data-color="#ef5a52"></div>
+            <div class="color-option" style="background: #ff8c42;" onclick="setThemeColor('#ff8c42', '#ea580c')" data-color="#ff8c42"></div>
+            <div class="color-option" style="background: #ffd23f;" onclick="setThemeColor('#ffd23f', '#d97706')" data-color="#ffd23f"></div>
+            <div class="color-option" style="background: #06d6a0;" onclick="setThemeColor('#06d6a0', '#059669')" data-color="#06d6a0"></div>
+            <div class="color-option" style="background: #118df0;" onclick="setThemeColor('#118df0', '#2563eb')" data-color="#118df0"></div>
+            <div class="color-option" style="background: #8b5fbf;" onclick="setThemeColor('#8b5fbf', '#7c3aed')" data-color="#8b5fbf"></div>
+            <div class="color-option active" style="background: #2d3748;" onclick="setThemeColor('#2d3748', '#1a202c')" data-color="#2d3748"></div>
+            <div class="color-option" style="background: #718096;" onclick="setThemeColor('#718096', '#4a5568')" data-color="#718096"></div>
+        </div>
+    </div>
+
+    <div class="customization-section">
+        <label class="section-label">Font:</label>
+        <select class="font-dropdown" id="fontSelector" onchange="setFont(this.value)">
+            <option value="'Segoe UI', sans-serif">Segoe UI </option>
+            <option value="'Roboto', sans-serif">Roboto </option>
+            <option value="'Open Sans', sans-serif">Open Sans </option>
+            <option value="'Lato', sans-serif">Lato </option>
+            <option value="'Montserrat', sans-serif">Montserrat </option>
+            <option value="'Poppins', sans-serif">Poppins </option>
+            <option value="'Times New Roman', serif">Times New Roman </option>
+            <option value="'Georgia', serif">Georgia </option>
+            <option value="'Merriweather', serif">Merriweather</option>
+            <option value="'Playfair Display', serif">Playfair Display </option>
+            <option value="'Garamond', serif">Garamond </option>
+        </select>
+    </div>
+
+    <div class="customization-section">
+        <label class="section-label">Font Size:</label>
+        <div class="font-size-control">
+            <input type="range" min="12" max="20" value="14" class="font-size-slider" id="fontSizeRange" oninput="setFontSize(this.value)">
+            <span class="font-size-display" id="fontSizeDisplay">14</span>
+        </div>
+    </div>
+</div>
+                <div class="form-section">
+                    <h3>Personal Information</h3>
+                    
+                    <div class="form-group photo-section">
+                        <label>Profile Photo</label>
+                        <div class="photo-upload-container">
+                            <input type="file" id="photoUpload" accept="image/*" style="display: none;" onchange="handlePhotoUpload(event)">
+                            <div class="photo-preview" id="photoPreview">
+                                <img id="profilePhoto" src="" alt="Profile Photo" style="display: none;">
+                                <div class="photo-placeholder" id="photoPlaceholder" onclick="document.getElementById('photoUpload').click()">
+                                    
+                                    <p>Click to add photo</p>
+                                </div>
+                                <button type="button" class="remove-photo-btn" id="removePhotoBtn" onclick="removePhoto()" style="display: none;">×</button>
+                            </div>
+                            <div class="photo-options">
+                                <label class="photo-toggle">
+                                    <input type="checkbox" id="showPhotoInResume" onchange="updatePreview()" checked>
+                                    <span>Show photo in resume</span>
+                                    <small>*Max file size 5Mb</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" id="fullName" placeholder="Enter your full name" oninput="updatePreview(); validateField(this)" required>
+                        <div class="error-message" style="display: none;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" id="email" placeholder="your.email@example.com" oninput="updatePreview(); validateField(this)" required>
+                        <div class="error-message" style="display: none;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone *</label>
+                        <input type="tel" id="phone" placeholder="+91 123-456-7890" oninput="updatePreview(); validateField(this)" required>
+                        <div class="error-message" style="display: none;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>LinkedIn Profile</label>
+                        <input type="url" id="linkedin" placeholder="https://linkedin.com/in/yourprofile" oninput="updatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" id="location" placeholder="City, State/Country" oninput="updatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label>Professional Summary</label>
+                        <textarea id="summary" placeholder="Brief introduction highlighting your key skills and career objectives" rows="4" oninput="updatePreview()"></textarea>
+                        <small>Tip: Keep it concise (2-3 sentences)</small>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Work Experience</h3>
+                    <div id="experienceContainer"></div>
+                    <button class="add-btn" onclick="addExperience()">+ Add Experience</button>
+                </div>
+
+                <div class="form-section">
+                    <h3>Education</h3>
+                    <div id="educationContainer"></div>
+                    <button class="add-btn" onclick="addEducation()">+ Add Education</button>
+                </div>  
+
+                <div class="form-section">
+                    <h3> Projects</h3>
+                    <div id="projectsContainer"></div>
+                    <button class="add-btn" onclick="addProjects()">+ Add Project</button>
+                </div>
+
+                <div class="form-section">
+                    <h3>Skills</h3>
+                    <div class="form-group">
+                        <label>Add Skills (Press Enter to add)</label>
+                        <input type="text" id="skillInput" placeholder="e.g., JavaScript, Project Management, Adobe Photoshop" onkeypress="addSkill(event)">
+                    </div>
+                    <div id="skillsList" class="skills-display"></div>
+                </div>
+
+                <!-- Additional Section -->
+                <div class="form-section">
+                    <h3> Additional Information</h3>
+                    <div class="form-group">
+                        <label>Certifications/Awards</label>
+                        <textarea id="additionalInfo" placeholder="Add any certifications, awards, languages, or other relevant information" rows="3" oninput="updatePreview()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Preview -->
+            <div class="right-panel">
+                <div class="top-bar">
+                    <h3>Resume Preview</h3>
+                    <div class="action-buttons">
+                        <button class="action-btn" onclick="resetForm()" title="Clear All"> Clear</button>
+                        <button class="action-btn" onclick="saveResume()" title="Save Draft"> Save</button>
+                        <button class="download-btn" onclick="downloadResume()"> Download PDF</button>
+                    </div>
+                </div>
+
+                <!-- Page Size Indicator -->
+                <div class="page-indicator" id="pageIndicator">
+                    <span>Page 1 of 1</span>
+                </div>
+
+                <div class="preview-area">
+                    <div class="resume-container" id="resumePreview">
+                        <!-- Header -->
+                        <div class="resume-header">
+                            <div class="header-content">
+                                <div class="profile-photo-container" id="profilePhotoContainer" style="display: none;">
+                                    <img id="resumeProfilePhoto" src="" alt="Profile Photo">
+                                </div>
+                                <div class="header-text">
+                                    <h1 class="resume-name" id="previewName">Your Name</h1>
+                                    <div class="resume-contact" id="previewContact">
+                                        <span id="previewEmail">your.email@example.com</span>
+                                        <span id="previewPhone">+91 123-456-7890</span>
+                                        <span id="previewLinkedin" style="display: none;"></span>
+                                        <span id="previewLocation" style="display: none;"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="resume-section" id="summarySection" style="display: none;">
+                            <h3>Professional Summary</h3>
+                            <p id="previewSummary"></p>
+                        </div>
+
+                        <div class="resume-section" id="experienceSection" style="display: none;">
+                            <h3>Work Experience</h3>
+                            <div id="previewExperience"></div>
+                        </div>
+
+                        <div class="resume-section" id="educationSection" style="display: none;">
+                            <h3>Education</h3>
+                            <div id="previewEducation"></div>
+                        </div>
+
+                        <div class="resume-section" id="projectSection" style="display: none;">
+                            <h3>Projects</h3>
+                            <div id="previewProjects"></div>
+                        </div>
+
+                        <div class="resume-section" id="skillsSection" style="display: none;">
+                            <h3>Skills</h3>
+                            <div class="skills-container" id="previewSkills"></div>
+                        </div>
+
+                        <div class="resume-section" id="additionalSection" style="display: none;">
+                            <h3>Additional Information</h3>
+                            <div id="previewAdditional"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Career Timeline -->
+                <div class="timeline-section" id="timelineSection">
+                    <h4>🕒 Your Career Timeline</h4>
+                    <div class="timeline-container" id="timelineContainer">
+                        <p class="timeline-placeholder">Add work experience to see your career timeline</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✅ Success!</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage">Operation completed successfully!</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="upload.js"></script>
+</body>
+</html>
